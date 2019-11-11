@@ -5,6 +5,8 @@ import android.app.Activity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -22,14 +24,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nesposi3.capstoneapp.MainActivity;
 import com.nesposi3.capstoneapp.R;
-import com.nesposi3.capstoneapp.ui.login.LoginViewModel;
-import com.nesposi3.capstoneapp.ui.login.LoginViewModelFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.login);
+        final Button registerButton = findViewById(R.id.register);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
@@ -49,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
                 loginButton.setEnabled(loginFormState.isDataValid());
+                registerButton.setEnabled(loginFormState.isDataValid());
                 if (loginFormState.getUsernameError() != null) {
                     usernameEditText.setError(getString(loginFormState.getUsernameError()));
                 }
@@ -70,11 +72,15 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 if (loginResult.getSuccess() != null) {
                     updateUiWithUser(loginResult.getSuccess());
+                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                    i.putExtra("name",loginResult.getSuccess().getDisplayName());
+                    i.putExtra("hash",loginResult.getSuccess().getHash());
+                    LoginActivity.this.startActivity(i);
+                    //Complete and destroy login activity once successful
+                    finish();
                 }
                 setResult(Activity.RESULT_OK);
 
-                //Complete and destroy login activity once successful
-                finish();
             }
         });
 
@@ -102,8 +108,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    loginViewModel.login(usernameEditText.getText().toString(),
-                            passwordEditText.getText().toString());
+                    new LoginTask().execute(usernameEditText.getText().toString(),passwordEditText.getText().toString(),"false");
                 }
                 return false;
             }
@@ -113,8 +118,15 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 loadingProgressBar.setVisibility(View.VISIBLE);
-                loginViewModel.login(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+                new LoginTask().execute(usernameEditText.getText().toString(),passwordEditText.getText().toString(),"false");
+
+            }
+        });
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadingProgressBar.setVisibility(View.VISIBLE);
+                new LoginTask().execute(usernameEditText.getText().toString(),passwordEditText.getText().toString(),"true");
             }
         });
     }
@@ -127,5 +139,20 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    }
+    private class LoginTask extends AsyncTask<String,Void, Boolean>{
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            String name = strings[0];
+            String hash = strings[1];
+            boolean register = Boolean.parseBoolean(strings[2]);
+            if(register){
+                loginViewModel.register(name,hash);
+            }else{
+                loginViewModel.login(name,hash);
+            }
+            return true;
+        }
     }
 }

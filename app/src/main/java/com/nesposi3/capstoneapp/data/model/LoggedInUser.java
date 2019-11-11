@@ -6,18 +6,18 @@ package com.nesposi3.capstoneapp.data.model;
 public class LoggedInUser {
 
     private String userId;
-    private String displayName;
+    private String passHash;
 
-    public LoggedInUser(String userId, String displayName) {
+    public LoggedInUser(String userId, String passHash) {
         this.userId = userId;
-        this.displayName = displayName;
+        this.passHash = passHash;
     }
 
     public String getUserId() {
         return userId;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getPassHash() {
+        return passHash;
     }
 }
