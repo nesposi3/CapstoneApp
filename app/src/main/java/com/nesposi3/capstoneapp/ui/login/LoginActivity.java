@@ -24,6 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nesposi3.capstoneapp.HomeScreen;
 import com.nesposi3.capstoneapp.MainActivity;
 import com.nesposi3.capstoneapp.R;
 
@@ -72,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 if (loginResult.getSuccess() != null) {
                     updateUiWithUser(loginResult.getSuccess());
-                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                    Intent i = new Intent(LoginActivity.this, HomeScreen.class);
                     i.putExtra("name",loginResult.getSuccess().getDisplayName());
                     i.putExtra("hash",loginResult.getSuccess().getHash());
                     LoginActivity.this.startActivity(i);
