@@ -2,6 +2,8 @@ package com.nesposi3.capstoneapp.ui.login;
 
 import android.app.Activity;
 
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -24,12 +26,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nesposi3.capstoneapp.HomeScreen;
-import com.nesposi3.capstoneapp.MainActivity;
+import com.nesposi3.capstoneapp.ui.home.HomeScreen;
 import com.nesposi3.capstoneapp.R;
+import com.nesposi3.capstoneapp.ui.login.quitConfirm.QuitDialogFragment;
+import com.nesposi3.capstoneapp.ui.login.quitConfirm.QuitDialogListener;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity  implements QuitDialogListener {
 
+    private static final String TAG ="LoginActivity" ;
     private LoginViewModel loginViewModel;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -141,6 +145,17 @@ public class LoginActivity extends AppCompatActivity {
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        this.finish();
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+
+    }
+
     private class LoginTask extends AsyncTask<String,Void, Boolean>{
 
         @Override
@@ -155,5 +170,11 @@ public class LoginActivity extends AppCompatActivity {
             }
             return true;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        FragmentManager manager = getSupportFragmentManager();
+        new QuitDialogFragment().show(manager,TAG);
     }
 }

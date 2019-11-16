@@ -2,7 +2,7 @@
     <string name="app_name">Market Mayhem</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">Sign in</string>
-    <string name="prompt_email">Email</string>
+    <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign into Market Mayhem</string>
     <string name="action_register">Register for Market Mayhem</string>
@@ -16,4 +16,9 @@
     <string name="tab_text_2">Tab 2</string>
     <string name="server_url">http://3.83.107.69:8090/</string>
     <string name="title_activity_home_screen">HomeScreen</string>
+    <string name="welcomeMessage">Welcome to Market Mayhem!</string>
+    <string name="logoutConfirm">Do you want to logout?</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="quit_confirm">Do you want to quit Market Mayhem?</string>
 </resources>
