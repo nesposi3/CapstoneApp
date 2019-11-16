@@ -192,6 +192,9 @@ public class HomeScreen extends AppCompatActivity implements LogoutDialogListene
         }
     }
 
-
+    @Override
+    public void onBackPressed() {
+        logoutConfirm();
+    }
 }
 
