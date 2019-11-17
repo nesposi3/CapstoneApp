@@ -11,17 +11,15 @@
 
     <EditText
         android:id="@+id/nameField2"
-        android:layout_width="279dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="60dp"
-        android:layout_marginLeft="60dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginRight="60dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:clickable="false"
         android:ems="10"
         android:gravity="center"
         android:inputType="none"
+        android:maxLines="2"
+        android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -30,7 +28,8 @@
         android:id="@+id/userGamesTop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="75dp"
+        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/swipeRefresh"
         app:layout_constraintEnd_toEndOf="@+id/nameField2"
         app:layout_constraintStart_toStartOf="@+id/nameField2"
@@ -40,25 +39,33 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userGamesTop">
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/homeScroll"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:fillViewport="true">
 
-        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="50dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:orientation="vertical"
+                android:padding="10dp"></LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
