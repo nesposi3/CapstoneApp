@@ -23,4 +23,7 @@ public class Dividend {
     public int getNumShares() {
         return numShares;
     }
+    public int getValue(){
+        return (numShares * boughtStock.getPrice());
+    }
 }

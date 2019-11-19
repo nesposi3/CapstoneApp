@@ -12,8 +12,9 @@
     <string name="invalid_password">Password must not be empty</string>
     <string name="login_failed">"Login failed"</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_1">Market</string>
+    <string name="tab_text_2">Leaderboard</string>
+    <string name="tab_text_3">Game Info</string>
     <string name="server_url">http://3.83.107.69:8090/</string>
     <string name="title_activity_home_screen">HomeScreen</string>
     <string name="welcomeMessage">Welcome to Market Mayhem!</string>

@@ -68,14 +68,15 @@ public class LoginDataSource {
             con.setReadTimeout(5000);
             int code = con.getResponseCode();
             // Error code
+            Log.d(TAG, "register: " + code);
             if(code > 399 && code < 500){
-                return new Result.Error(new LoginException("Incorrect username or password"));
+                return new Result.Error(new LoginException("User Already Exists"));
             }else{
                 return new Result.Success<>(fakeUser);
             }
         } catch (Exception e) {
             Log.e(TAG, "register: ",e );
-            return new Result.Error(new IOException("Error logging in", e));
+            return new Result.Error(new IOException("Error registering", e));
         }
     }
 

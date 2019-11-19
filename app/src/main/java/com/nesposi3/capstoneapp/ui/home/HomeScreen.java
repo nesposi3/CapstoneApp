@@ -6,10 +6,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
-import com.nesposi3.capstoneapp.ui.gameScreen.MainActivity;
+import com.nesposi3.capstoneapp.ui.main.MainActivity;
 import com.nesposi3.capstoneapp.R;
 import com.nesposi3.capstoneapp.data.StaticUtils;
 import com.nesposi3.capstoneapp.data.model.GameState;
@@ -63,6 +62,8 @@ public class HomeScreen extends AppCompatActivity implements LogoutDialogListene
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId()==R.id.logout){
             this.logoutConfirm();
+        }else if (item.getItemId()==R.id.refresh2){
+            new GetGamesTask(name,hash).execute(name,hash);
         }
         return true;
     }
@@ -101,6 +102,7 @@ public class HomeScreen extends AppCompatActivity implements LogoutDialogListene
 
             }
         });
+
     }
     private PopupWindow popupSetup(){
         //Popup to create/join game
@@ -156,12 +158,23 @@ public class HomeScreen extends AppCompatActivity implements LogoutDialogListene
             public void onClick(View v) {
                 if(idField.getText().toString().trim().length() > 0){
                     new JoinCreateTask().execute(name,hash,idField.getText().toString(),"join");
+                    popupWindow.dismiss();
+                    idField.setText("");
                 }
             }
         });
         Button create = new Button(this);
         create.setText("Create");
-
+        create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(idField.getText().toString().trim().length() > 0){
+                    new JoinCreateTask().execute(name,hash,idField.getText().toString(),"create");
+                    popupWindow.dismiss();
+                    idField.setText("");
+                }
+            }
+        });
         LinearLayout buttons = new LinearLayout(this);
         buttons.setOrientation(LinearLayout.HORIZONTAL);
         buttons.addView(join);
@@ -303,10 +316,7 @@ public class HomeScreen extends AppCompatActivity implements LogoutDialogListene
     private class JoinCreateTask extends AsyncTask<String,String,String> {
 
 
-        @Override
-        protected void onPreExecute() {
-            swipeRefreshLayout.setRefreshing(true);
-        }
+
 
         @Override
         protected String doInBackground(String... strings) {
@@ -315,7 +325,7 @@ public class HomeScreen extends AppCompatActivity implements LogoutDialogListene
             String gameID = strings[2];
             String joinOrCreate = strings[3];
             try {
-                URL apiUrl = new URL(getString(R.string.server_url) + "game/" + gameID + joinOrCreate + "/" + name + "-" + hash);
+                URL apiUrl = new URL(getString(R.string.server_url) + "game/" + gameID +"/" +  joinOrCreate + "/" + name + "-" + hash);
                 HttpURLConnection con = (HttpURLConnection) apiUrl.openConnection();
                 con.setRequestMethod("GET");
                 con.setConnectTimeout(5000);
@@ -327,7 +337,7 @@ public class HomeScreen extends AppCompatActivity implements LogoutDialogListene
                     if(code == 409){
                         return "Game with id " + gameID + " already exists";
                     }else{
-                        return "Error joining game " + gameID;
+                        return "Error joining game " + gameID + ": " + code;
                     }
                 } else {
                     return "Success";
@@ -339,6 +349,9 @@ public class HomeScreen extends AppCompatActivity implements LogoutDialogListene
 
         @Override
         protected void onPostExecute(String s) {
+            if(s.equals("Success")){
+                new GetGamesTask(name,hash).execute(name,hash);
+            }
             Toast.makeText(HomeScreen.this,s, Toast.LENGTH_LONG).show();
 
         }

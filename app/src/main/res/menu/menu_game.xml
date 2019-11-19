@@ -1,6 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.nesposi3.capstoneapp.ui.gameScreen.MainActivity">
-
+    tools:context="com.nesposi3.capstoneapp.ui.main.MainActivity">
+    <item
+        android:id="@+id/refresh"
+        android:enabled="true"
+        android:icon="@drawable/ic_refresh_48px"
+        android:title="Refresh"
+        android:visible="true"
+        app:showAsAction="always"
+        android:tint="@android:color/white"/>
 </menu>

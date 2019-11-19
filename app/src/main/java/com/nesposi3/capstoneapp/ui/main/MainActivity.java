@@ -1,4 +1,4 @@
-package com.nesposi3.capstoneapp.ui.gameScreen;
+package com.nesposi3.capstoneapp.ui.main;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -8,10 +8,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +21,7 @@ import android.view.View;
 import com.google.gson.Gson;
 import com.nesposi3.capstoneapp.R;
 import com.nesposi3.capstoneapp.data.model.GameState;
+import com.nesposi3.capstoneapp.ui.home.HomeScreen;
 import com.nesposi3.capstoneapp.ui.main.SectionsPagerAdapter;
 
 import java.io.BufferedReader;
@@ -28,14 +31,23 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
-    private String userName;
-    private String hash;
-    private String gameID;
-
+    protected String userName;
+    protected String hash;
+    protected String gameID;
+    protected GameState gameState;
+    private final String TAG = "MainActivity";
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_game, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId()== R.id.refresh2){
+            new GetGameInfoTask().execute(userName,hash,gameID);
+        }
+        return true;
     }
 
     @Override
@@ -49,20 +61,14 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Game: " + gameID);
+        new GetGameInfoTask().execute(userName,hash,gameID);
+    }
+    private void setUpTabs(){
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
-        FloatingActionButton fab = findViewById(R.id.fab);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 
     private class GetGameInfoTask extends AsyncTask<String, GameState, GameState> {
@@ -101,5 +107,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        @Override
+        protected void onPostExecute(GameState gameState) {
+            Log.d(TAG, "onPostExecute: " + gameState.getGameID());
+            MainActivity.this.gameState = gameState;
+            setUpTabs();
+        }
     }
 }
