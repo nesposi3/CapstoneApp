@@ -41,6 +41,9 @@ public class Player implements Comparable<Player> {
     public String getPortfolioDollarValue(){
         return StaticUtils.centsToDolars(getPortfolioValue());
     }
+    public String getTotalCashDollarValue(){
+        return StaticUtils.centsToDolars(totalCash);
+    }
     @Override
     public int compareTo(Player o) {
         if(this.getPortfolioValue() > o.getPortfolioValue()){
@@ -50,5 +53,13 @@ public class Player implements Comparable<Player> {
         }else{
             return 0;
         }
+    }
+    public int getNumOwned(Stock s){
+        for (Dividend d: portfolio) {
+            if(d.getBoughtStock().getName().equals(s.getName())){
+                return d.getNumShares();
+            }
+        }
+        return 0;
     }
 }

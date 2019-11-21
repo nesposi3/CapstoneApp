@@ -17,14 +17,17 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.nesposi3.capstoneapp.R;
 import com.nesposi3.capstoneapp.data.model.GameState;
 import com.nesposi3.capstoneapp.data.model.Player;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
-public class LeaderBoardFragment extends Fragment {
+public class LeaderBoardFragment extends RefreshableFragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
     private final String TAG = "LeaderBoardFragment";
     private PageViewModel pageViewModel;
@@ -52,12 +55,19 @@ public class LeaderBoardFragment extends Fragment {
         pageViewModel.setIndex(index);
     }
     private void setUpLeaderBoard(View v){
+        SwipeRefreshLayout swipeRefreshLayout = v.findViewById(R.id.leaderRefresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                listener.onRefresh(1);
+            }
+        });
         LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.leaderboardLinear);
         if(state==null){
             return;
         }
         Player[] players = state.getPlayers();
-        Arrays.sort(players);
+        Arrays.sort(players, Collections.reverseOrder());
         for (int i = 0; i <players.length ; i++) {
             String place = (i+1) + ". ";
             CardView cardView = new CardView(v.getContext());
@@ -71,7 +81,7 @@ public class LeaderBoardFragment extends Fragment {
             textView.setTextSize(30);
             TextView money = new TextView(v.getContext());
             money.setTextSize(20);
-            money.setText("Portfolio Value: " + players[i].getPortfolioDollarValue());
+            money.setText("Liquid equity: " + players[i].getTotalCashDollarValue());
             money.setGravity(Gravity.RIGHT);
             LinearLayout insideRow = new LinearLayout(v.getContext());
             LinearLayout.LayoutParams insideRowParams = (
@@ -109,4 +119,5 @@ public class LeaderBoardFragment extends Fragment {
 
         return root;
     }
+
 }

@@ -47,6 +47,7 @@ public class LoginDataSource {
             con.setConnectTimeout(5000);
             con.setReadTimeout(5000);
             int code = con.getResponseCode();
+            Log.d(TAG, "login: " + code);
             // Error code
             if(code > 399 && code < 500){
                 return new Result.Error(new LoginException("Incorrect username or password"));

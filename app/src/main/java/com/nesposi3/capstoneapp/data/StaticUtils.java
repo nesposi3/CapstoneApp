@@ -13,6 +13,7 @@ public class StaticUtils {
     public static String centsToDolars(int cents){
         int dollars = (cents - (cents%100));
         int centsOut = cents%100;
+        dollars /=100;
         return "$" + dollars + "." + String.format("%02d",centsOut);
     }
 }

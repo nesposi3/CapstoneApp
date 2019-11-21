@@ -1,5 +1,5 @@
 package com.nesposi3.capstoneapp.ui.main;
 
 public interface RefreshListener {
-    public void onRefresh();
+    public void onRefresh(int index);
 }

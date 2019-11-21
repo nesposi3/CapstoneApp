@@ -1,28 +1,25 @@
 package com.nesposi3.capstoneapp.ui.main;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.google.gson.Gson;
 import com.nesposi3.capstoneapp.R;
 import com.nesposi3.capstoneapp.data.model.GameState;
-import com.nesposi3.capstoneapp.ui.home.HomeScreen;
-import com.nesposi3.capstoneapp.ui.main.SectionsPagerAdapter;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -30,7 +27,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RefreshListener {
     protected String userName;
     protected String hash;
     protected String gameID;
@@ -43,9 +40,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onAttachFragment(Fragment fragment) {
+        if(fragment instanceof RefreshableFragment){
+            RefreshableFragment fragment1 = (RefreshableFragment) fragment;
+            fragment1.setListener(this);
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId()== R.id.refresh2){
-            new GetGameInfoTask().execute(userName,hash,gameID);
+        if(item.getItemId()== R.id.refresh){
+            new GetGameInfoTask(0).execute(userName,hash,gameID);
         }
         return true;
     }
@@ -61,18 +66,27 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Game: " + gameID);
-        new GetGameInfoTask().execute(userName,hash,gameID);
+        new GetGameInfoTask(0).execute(userName,hash,gameID);
     }
-    private void setUpTabs(){
+    private void setUpTabs(int index){
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
+        tabs.getTabAt(index).select();
+    }
+
+    @Override
+    public void onRefresh(int i) {
+        new GetGameInfoTask(i).execute(userName,hash,gameID);
     }
 
     private class GetGameInfoTask extends AsyncTask<String, GameState, GameState> {
-
+        private int tabIndex;
+        public GetGameInfoTask(int i){
+            tabIndex = i;
+        }
         @Override
         protected GameState doInBackground(String... strings) {
             String name = strings[0];
@@ -109,9 +123,17 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(GameState gameState) {
-            Log.d(TAG, "onPostExecute: " + gameState.getGameID());
             MainActivity.this.gameState = gameState;
-            setUpTabs();
+            setUpTabs(tabIndex);
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        TabLayout tabs = findViewById(R.id.tabs);
+        int i = tabs.getSelectedTabPosition();
+        new GetGameInfoTask(i).execute(userName,hash,gameID);
+        Log.d(TAG, "onConfigurationChanged: ");
+        super.onConfigurationChanged(newConfig);
     }
 }

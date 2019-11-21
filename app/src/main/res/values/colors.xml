@@ -6,4 +6,6 @@
     <color name="cardFirstPlace">#f5ea74</color>
     <color name="cardSecondPlace">#d8d8d8</color>
     <color name="cardThirdPlace">#da864d</color>
+    <color name="stockTrendUp">#90ee90</color>
+    <color name="stockTrendDown">#ffcccb</color>
 </resources>

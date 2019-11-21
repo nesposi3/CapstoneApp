@@ -12,12 +12,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ui.stockPages.StockScreen"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".ui.home.HomeScreen"
             android:label="@string/title_activity_home_screen"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.main.MainActivity"
+            android:configChanges="orientation|screenLayout|screenSize"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
