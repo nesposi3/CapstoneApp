@@ -25,6 +25,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.DefaultValueFormatter;
+import com.github.mikephil.charting.utils.EntryXComparator;
 import com.google.gson.Gson;
 import com.nesposi3.capstoneapp.R;
 import com.nesposi3.capstoneapp.data.model.GameState;
@@ -36,6 +43,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class StockScreen extends AppCompatActivity {
     private GameState gameState;
@@ -113,7 +123,7 @@ public class StockScreen extends AppCompatActivity {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new SellStockTask().execute(name,hash,gameState.getGameID(), stockName,String.valueOf(numberPicker.getValue()));
+                new SellStockTask().execute(name, hash, gameState.getGameID(), stockName, String.valueOf(numberPicker.getValue()));
                 new GetGameInfoTask(numOwned, stockName, name, hash).execute(name, hash, gameState.getGameID());
                 popupWindow.dismiss();
             }
@@ -159,7 +169,7 @@ public class StockScreen extends AppCompatActivity {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new BuyStockTask().execute(name,hash,gameState.getGameID(), stockName,String.valueOf(numberPicker.getValue()));
+                new BuyStockTask().execute(name, hash, gameState.getGameID(), stockName, String.valueOf(numberPicker.getValue()));
                 popupWindow.dismiss();
                 new GetGameInfoTask(numOwned, stockName, name, hash).execute(name, hash, gameState.getGameID());
             }
@@ -251,6 +261,7 @@ public class StockScreen extends AppCompatActivity {
 
                 }
             });
+            new GetHistoryClass().execute(name, hash, gameState.getGameID());
         }
     }
 
@@ -285,11 +296,11 @@ public class StockScreen extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            Toast.makeText(StockScreen.this,s,Toast.LENGTH_LONG).show();
+            Toast.makeText(StockScreen.this, s, Toast.LENGTH_LONG).show();
         }
     }
 
-    private class BuyStockTask  extends AsyncTask<String,String,String>{
+    private class BuyStockTask extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... strings) {
             String name = strings[0];
@@ -320,7 +331,94 @@ public class StockScreen extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            Toast.makeText(StockScreen.this,s,Toast.LENGTH_LONG).show();
+            Toast.makeText(StockScreen.this, s, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private class GetHistoryClass extends AsyncTask<String, String, GameState[]> {
+        //Total game time in minutes
+        private final int totalTime = 7200;
+
+        @Override
+        protected GameState[] doInBackground(String... strings) {
+            String name = strings[0];
+            String hash = strings[1];
+            String gameID = strings[2];
+            try {
+                URL apiUrl = new URL(getString(R.string.server_url) + "game/" + gameID + "/getGameHistory/" + name + "-" + hash);
+                HttpURLConnection con = (HttpURLConnection) apiUrl.openConnection();
+                con.setRequestMethod("GET");
+                con.setConnectTimeout(5000);
+                con.setReadTimeout(5000);
+                int code = con.getResponseCode();
+                con.connect();
+                InputStream stream = con.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                String line = "";
+                StringBuilder builder = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line);
+                }
+                String json = builder.toString();
+                Gson gson = new Gson();
+                // Error code
+                if (code > 399 && code < 500) {
+                    return null;
+                } else {
+                    GameState[] gameStates = gson.fromJson(json, GameState[].class);
+                    return gameStates;
+                }
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+
+        @Override
+        protected void onPostExecute(GameState[] gameStates) {
+            String stockName = StockScreen.this.stockName;
+            TextView title = findViewById(R.id.graphTitle);
+            title.setText("Stock info for " +stockName + " in the last hour");
+            List<Entry> entries = new ArrayList<>();
+            Log.d("StockScreen", "onPostExecute: " + gameStates.length);
+            int max = -1;
+            int minY = Integer.MAX_VALUE;
+            int minX = Integer.MAX_VALUE;
+            int maxX = -1;
+            for (int i = 0; i < gameStates.length; i++) {
+                GameState g = gameStates[i];
+                Stock s = g.getStock(stockName);
+                int x = totalTime - g.getTicksLeft();
+                int y = s.getPrice();
+                if (y > max) {
+                    max = y;
+                } if (y < minY) {
+                    minY = y;
+                }
+                if (x > maxX) {
+                    maxX = x;
+                } if (x < minX) {
+                    minX = x;
+                }
+                Entry entry = new Entry(x, y);
+                entries.add(entry);
+            }
+            Collections.sort(entries, new EntryXComparator());
+
+            LineChart chart = findViewById(R.id.lineChart);
+            chart.setNoDataText("No history");
+            chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+            chart.getAxisRight().setEnabled(false);
+            chart.getAxisLeft().setAxisMaximum(max);
+            chart.getAxisLeft().setAxisMinimum(minY);
+            chart.getAxisLeft().setValueFormatter(new PriceValueFormatter());
+            chart.getDescription().setEnabled(false);
+            LineDataSet set = new LineDataSet(entries, "Price");
+            set.setDrawValues(false);
+            LineData data = new LineData(set);
+            Log.d("StockScreen", "onPostExecute: " + data.getEntryCount());
+            chart.setData(new LineData(set));
+            chart.invalidate();
         }
     }
 }
