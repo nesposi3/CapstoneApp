@@ -67,7 +67,7 @@ public class LeaderBoardFragment extends RefreshableFragment {
             return;
         }
         Player[] players = state.getPlayers();
-        Arrays.sort(players, Collections.reverseOrder());
+        Arrays.sort(players);
         for (int i = 0; i <players.length ; i++) {
             String place = (i+1) + ". ";
             CardView cardView = new CardView(v.getContext());
