@@ -34,7 +34,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         }else if(position==1){
             return LeaderBoardFragment.newInstance(2);
         }else{
-            return LeaderBoardFragment.newInstance(2);
+            return UserInfoFragment.newInstance(3);
         }
 
     }

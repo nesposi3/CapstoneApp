@@ -1,5 +1,6 @@
 package com.nesposi3.capstoneapp.ui.stockPages;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -15,6 +16,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -55,6 +57,14 @@ public class StockScreen extends AppCompatActivity {
     private int totalCash;
     private int price;
     private String stockName;
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId()== R.id.stockRefresh){
+            new GetGameInfoTask(numOwned, stockName, this.name, hash).execute(this.name, hash, gameState.getGameID());
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

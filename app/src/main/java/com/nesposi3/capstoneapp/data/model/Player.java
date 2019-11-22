@@ -62,4 +62,10 @@ public class Player implements Comparable<Player> {
         }
         return 0;
     }
+    public int getTotalEquity(){
+        return (totalCash + getPortfolioValue());
+    }
+    public String getTotalEquityDollarValue(){
+        return StaticUtils.centsToDolars(getTotalEquity());
+    }
 }
