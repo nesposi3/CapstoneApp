@@ -63,6 +63,8 @@ public class UserInfoFragment extends RefreshableFragment {
         name = activity.userName;
         hash = activity.hash;
         user = activity.gameState.getPlayer(name);
+        Log.d("UserScreen", "setupUser: " +activity.gameState.getPlayer(name).getName());
+
         setupUser(root);
         return root;
     }

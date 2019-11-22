@@ -49,8 +49,9 @@ public class GameState {
     public Player getPlayer(String name){
         for (Player p: players
              ) {
-            if(p.getName().equals(name));
-            return p;
+            if(p.getName().equals(name)){
+                return p;
+            }
         }
         return null;
     }
