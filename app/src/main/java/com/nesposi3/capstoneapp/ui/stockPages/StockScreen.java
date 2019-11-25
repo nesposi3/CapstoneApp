@@ -63,6 +63,8 @@ public class StockScreen extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId()== R.id.stockRefresh){
             new GetGameInfoTask(numOwned, stockName, this.name, hash).execute(this.name, hash, gameState.getGameID());
+        }else if(item.getItemId()== android.R.id.home){
+            this.onBackPressed();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -83,6 +85,7 @@ public class StockScreen extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setTitle(stockName);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         int numOwned = Integer.parseInt(i.getStringExtra("numOwned"));
         String uName = i.getStringExtra("userName");
         String hash = i.getStringExtra("hash");

@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements RefreshListener {
             TabLayout tabs = findViewById(R.id.tabs);
             int selected = tabs.getSelectedTabPosition();
             new GetGameInfoTask(selected).execute(userName,hash,gameID);
+        }else if(item.getItemId()== android.R.id.home){
+            this.onBackPressed();
         }
         return true;
     }
@@ -68,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements RefreshListener {
         Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Game: " + gameID);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         new GetGameInfoTask(0).execute(userName,hash,gameID);
     }
     private void setUpTabs(int index){
