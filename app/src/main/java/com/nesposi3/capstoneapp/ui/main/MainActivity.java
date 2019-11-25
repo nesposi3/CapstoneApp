@@ -50,7 +50,9 @@ public class MainActivity extends AppCompatActivity implements RefreshListener {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId()== R.id.refresh){
-            new GetGameInfoTask(0).execute(userName,hash,gameID);
+            TabLayout tabs = findViewById(R.id.tabs);
+            int selected = tabs.getSelectedTabPosition();
+            new GetGameInfoTask(selected).execute(userName,hash,gameID);
         }
         return true;
     }
