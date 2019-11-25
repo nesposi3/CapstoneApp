@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -92,6 +93,17 @@ public class StockScreen extends AppCompatActivity {
         this.hash = hash;
         this.numOwned = numOwned;
         this.totalCash = totalCash;
+        final SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.stockScreenRefresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                new GetGameInfoTask(StockScreen.this.numOwned, StockScreen.this.stockName,
+                        StockScreen.this.name, StockScreen.this.hash)
+                        .execute(StockScreen.this.name, StockScreen.this.hash, gameState.getGameID());
+
+            }
+        });
 
     }
 
@@ -429,6 +441,8 @@ public class StockScreen extends AppCompatActivity {
             Log.d("StockScreen", "onPostExecute: " + data.getEntryCount());
             chart.setData(new LineData(set));
             chart.invalidate();
+            SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.stockScreenRefresh);
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 }
