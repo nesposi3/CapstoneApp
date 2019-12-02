@@ -26,6 +26,7 @@ import com.nesposi3.capstoneapp.data.model.Player;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 
 public class LeaderBoardFragment extends RefreshableFragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
@@ -67,7 +68,7 @@ public class LeaderBoardFragment extends RefreshableFragment {
             return;
         }
         Player[] players = state.getPlayers();
-        Arrays.sort(players);
+        Arrays.sort(players, Collections.<Player>reverseOrder());
         for (int i = 0; i <players.length ; i++) {
             String place = (i+1) + ". ";
             CardView cardView = new CardView(v.getContext());
@@ -81,7 +82,7 @@ public class LeaderBoardFragment extends RefreshableFragment {
             textView.setTextSize(30);
             TextView money = new TextView(v.getContext());
             money.setTextSize(20);
-            money.setText("Liquid equity: " + players[i].getTotalCashDollarValue());
+            money.setText("Total equity: " + players[i].getTotalEquityDollarValue());
             money.setGravity(Gravity.RIGHT);
             LinearLayout insideRow = new LinearLayout(v.getContext());
             LinearLayout.LayoutParams insideRowParams = (

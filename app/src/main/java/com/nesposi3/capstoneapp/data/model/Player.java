@@ -46,9 +46,9 @@ public class Player implements Comparable<Player> {
     }
     @Override
     public int compareTo(Player o) {
-        if(this.getPortfolioValue() > o.getPortfolioValue()){
+        if(this.getTotalEquity() > o.getTotalEquity()){
             return 1;
-        } else if(this.getPortfolioValue()< o.getPortfolioValue()){
+        } else if(this.getTotalEquity()< o.getTotalEquity()){
             return  -1;
         }else{
             return 0;
